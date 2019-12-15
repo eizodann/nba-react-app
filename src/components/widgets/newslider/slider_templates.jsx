@@ -4,7 +4,6 @@ import style from './slider.module.css'
 import { Link } from "react-router-dom";
 
 const SliderTemplates = (props) => {
-    console.log('props :', props);
 
     let template = null;
 

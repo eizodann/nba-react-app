@@ -59,7 +59,7 @@ class NewsList extends Component {
           >
             <div>
               <div className={style.newsList_item}>
-                <Link to={`/article/${item.id}`}>
+                <Link to={`/articles/${item.id}`}>
                   <CardInfo
                     teams={this.state.teams}
                     team={item.team}

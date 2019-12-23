@@ -32,12 +32,11 @@ class VideoArticle extends Component {
     getRelated =()=> {
         
         Axios.get(`${URL}/teams`)
-        .then (response => {console.log('response.data first :', response.data);
+        .then (response => {
             let teams = response.data
 
             Axios.get(`${URL}/videos?q=${this.state.team[0].city}&_limit=3`)
             .then(response => {
-                console.log('response.data :', response.data);
                 this.setState({
                     teams,
                     related : response.data

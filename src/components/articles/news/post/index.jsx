@@ -26,7 +26,7 @@ class NewsArticles extends Component {
         })
     }
 
-    render() { console.log('this.state :', this.state);
+    render() {
         const article = this.state.article;
         const team = this.state.team;
         return (

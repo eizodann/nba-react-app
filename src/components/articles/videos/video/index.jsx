@@ -3,11 +3,14 @@ import Axios from "axios";
 import { URL } from "../../../../config";
 import style from "../../articles.module.css";
 import Header from './header';
+import VideoRelated from '../../../widgets/videolist/videoRelated/videoRelated';
 
 class VideoArticle extends Component {
     state = {
         article : [],
-        team : []
+        team : [],
+        teams : [],
+        related : []
     }
 
     componentWillMount() {
@@ -20,6 +23,24 @@ class VideoArticle extends Component {
                 this.setState({
                     article,
                     team : response.data
+                });
+                this.getRelated()
+            })
+        })
+    }
+
+    getRelated =()=> {
+        
+        Axios.get(`${URL}/teams`)
+        .then (response => {console.log('response.data first :', response.data);
+            let teams = response.data
+
+            Axios.get(`${URL}/videos?q=${this.state.team[0].city}&_limit=3`)
+            .then(response => {
+                console.log('response.data :', response.data);
+                this.setState({
+                    teams,
+                    related : response.data
                 })
             })
         })
@@ -32,7 +53,14 @@ class VideoArticle extends Component {
         return (
             <div>
                 <Header teamData={team[0]}/>
-                video
+                <div className={style.videoWrapper}>
+                    <h1>{article.title}</h1>
+                    <iframe title="videoplayer" width="100%" height="300px" src={`https://www.youtube.com/embed/${article.team}`} frameborder="0"></iframe>
+                </div>
+                <VideoRelated
+                    data={this.state.related}
+                    teams={this.state.teams}
+                />
             </div>
         );
     }

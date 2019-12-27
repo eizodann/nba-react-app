@@ -10,7 +10,7 @@ const Header = (props) => {
       <FontAwesome
         onClick={props.onOpenNav}
         style={{ color: "#dfdfdf", padding: "10x", cursor: "pointer" }}
-        name="bars"
+        name="bars" size="2x"
       />
     </div>
   );

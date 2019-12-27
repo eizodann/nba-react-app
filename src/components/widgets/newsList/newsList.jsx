@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Link } from "react-router-dom";
-import { URL } from "../../../config";
 import style from "./newsList.module.css";
 
-import Axios from "axios";
 import Button from "../buttons/buttons";
 import CardInfo from "../cardInfo/cardInfo";
+import { firebaseDB, firebaseLooper, firebaseTeams, firebaseArticles } from "../../../firebase";
 
 class NewsList extends Component {
   state = {
@@ -23,24 +22,44 @@ class NewsList extends Component {
 
   request = (start, end) => {
     if (this.state.teams.length < 1) {
-      Axios.get(`${URL}/teams`).then(response => {
+      // Axios.get(`${URL}/teams`).then(response => {
+      //   this.setState({
+      //     teams: response.data
+      //   });
+      // });
+
+      firebaseTeams.once("value")
+      .then(snapshot => {
+        const teams = firebaseLooper(snapshot);
         this.setState({
-          teams: response.data
+          teams
         });
       });
     }
-    Axios.get(`${URL}/articles?_start=${start}&_end=${end}`).then(response => {
+    // Axios.get(`${URL}/articles?_start=${start}&_end=${end}`).then(response => {
+    //   this.setState({
+    //     items: [...this.state.items, ...response.data],
+    //     start,
+    //     end
+    //   });
+    // });
+
+    firebaseArticles.orderByChild('id').startAt(start).endAt(end).once('value')
+    .then((snapshot)=>{
+      const articles = firebaseLooper(snapshot);
       this.setState({
-        items: [...this.state.items, ...response.data],
+        items: [...this.state.items, ...articles],
         start,
         end
-      });
-    });
+      })
+      
+    })
+    .catch(e=>console.log('e :', e))
   };
 
   loadMore = () => {
     let end = this.state.end + this.state.amount;
-    this.request(this.state.end, end);
+    this.request(this.state.end + 1, end);
   };
 
   renderNews = type => {
@@ -85,24 +104,27 @@ class NewsList extends Component {
           >
             <div className={style.link_deco}>
               <Link to={`/articles/${item.id}`}>
-              <div className={style.flex_wrapper}>
-                <div
-                  className={style.left}
-                  style={{
-                    background: `url('/images/articles/${item.image}')`
-                  }}
-                >
-                  <div></div>
+                <div className={style.flex_wrapper}>
+                  <div
+                    className={style.left}
+                    style={{
+                      background: `url('/images/articles/${item.image}')`
+                    }}
+                  >
+                    <div></div>
+                  </div>
+                  <div className={style.right}>
+                    <CardInfo
+                      teams={this.state.teams}
+                      team={item.team}
+                      date={item.date}
+                    />
+                    <h2>{item.title}</h2>
+                  </div>
                 </div>
-                <div className={style.right}>
-                  <CardInfo teams={this.state.teams} team={item.team} date={item.date}/>
-                  <h2>{item.title}</h2>
-                </div>
-              </div>
-            </Link>
-          
+              </Link>
             </div>
-            </CSSTransition>
+          </CSSTransition>
         ));
         break;
 

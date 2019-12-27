@@ -5,7 +5,7 @@ import style from "./newsList.module.css";
 
 import Button from "../buttons/buttons";
 import CardInfo from "../cardInfo/cardInfo";
-import { firebaseDB, firebaseLooper, firebaseTeams, firebaseArticles } from "../../../firebase";
+import { firebaseLooper, firebaseTeams, firebaseArticles } from "../../../firebase";
 
 class NewsList extends Component {
   state = {

@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import style from "./videoList.module.css";
-import Axios from "axios";
 import Button from "../buttons/buttons";
-import { URL } from "../../../config";
 import VideosListTemplate from "./videosListTemplate";
+import { firebaseLooper, firebaseTeams, firebaseVideos } from "../../../firebase";
 
 class VideoList extends Component {
   state = {
@@ -20,21 +19,26 @@ class VideoList extends Component {
 
   request =(start,end)=> {
     if ( this.state.teams.length < 1 ) {
-        Axios.get(`${URL}/teams`).then(response=> {
-            this.setState({
-                teams: response.data
-            })
-        })
+      firebaseTeams.once("value")
+      .then(snapshot => {
+        const teams = firebaseLooper(snapshot);
+        this.setState({
+          teams
+        });
+      });
     }
 
-    Axios.get(`${URL}/videos?_start=${start}&_end=${end}`)
-            .then( response => {
-                this.setState({
-                    videos:[...this.state.videos,...response.data],
-                    start,
-                    end
-                })
-            })
+    firebaseVideos.orderByChild('id').startAt(start).endAt(end).once('value')
+    .then((snapshot)=>{
+      const videos = firebaseLooper(snapshot);
+      this.setState({
+        videos: [...this.state.videos, ...videos],
+        start,
+        end
+      })
+      
+    })
+    .catch(e=>console.log('e :', e))
   }
 
   renderVideos = () => {
@@ -52,7 +56,7 @@ class VideoList extends Component {
 
   loadMore =()=> {
     let end = this.state.end + this.state.amount;
-    this.request(this.state.end, end);
+    this.request(this.state.end + 1, end);
   }
 
   renderButton = () => {

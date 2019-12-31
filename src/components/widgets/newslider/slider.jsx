@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import SliderTemplates from './slider_templates';
-import { firebaseArticles, firebaseLooper } from '../../../firebase';
+import { firebase, firebaseArticles, firebaseLooper } from '../../../firebase';
 
 class NewsSlider extends Component {
     state = {
@@ -20,9 +20,16 @@ class NewsSlider extends Component {
             //     })
             // })
             const news=firebaseLooper(snapshot)
-            this.setState({
-                news
-            })
+            news.forEach((item,i)=>{
+                firebase.storage().ref('images')
+                .child(item.image).getDownloadURL()
+                .then( url =>{
+                    news[i].image = url;
+                    this.setState({
+                        news
+                    })
+                })
+            });
         })
 
         // Axios.get(`${URL}/articles?_start=${this.props.start}&_end=${this.props.end}`).then(response=> {

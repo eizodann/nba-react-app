@@ -21,7 +21,6 @@ class NewsArticles extends Component {
       .once("value")
       .then(snapshot => {
         let article = snapshot.val();
-        console.log("snapshot.val() :", snapshot.val());
         firebaseTeams
           .orderByChild("teamId")
           .equalTo(article.team)

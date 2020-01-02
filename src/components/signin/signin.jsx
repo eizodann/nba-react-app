@@ -113,7 +113,6 @@ class SignIn extends Component {
                     registerError:''
                 })
                 if(type){
-                  console.log('login :');
                     firebase.auth()
                     .signInWithEmailAndPassword(
                         dataToSubmit.email,
@@ -128,7 +127,6 @@ class SignIn extends Component {
                     })
 
                 } else {
-                  console.log('register :');
                     firebase.auth()
                     .createUserWithEmailAndPassword(
                         dataToSubmit.email,

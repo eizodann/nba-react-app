@@ -153,8 +153,6 @@ class dashboard extends Component {
             formIsValid = this.state.formdata[key].valid && formIsValid;
         }
 
-        console.log('dataToSubmit :', dataToSubmit);
-
         if (formIsValid) {
             this.setState({
                 loading:true,
@@ -168,12 +166,10 @@ class dashboard extends Component {
                 snapshot.forEach(childSnapshot=>{
                     articleId = childSnapshot.val().id;
                 }); 
-                console.log('articleId :', articleId);
-
                 dataToSubmit['date'] = firebase.database.ServerValue.TIMESTAMP
                 dataToSubmit['id'] = articleId + 1;
-                dataToSubmit['team'] = parseInt(dataToSubmit['team']);
-                //dataToSubmit['team'] = parseInt(dataToSubmit['team'],10);
+                //dataToSubmit['team'] = parseInt(dataToSubmit['team']);
+                dataToSubmit['team'] = parseInt(dataToSubmit['team'],10);
 
                firebaseArticles.push(dataToSubmit)
                .then( article => {
@@ -212,7 +208,6 @@ class dashboard extends Component {
         let rawState = convertToRaw(contentState)
 
         let html = stateToHTML(contentState)
-            console.log('html :', html);
         this.updateForm({id:'body'},html)
 
         this.setState({

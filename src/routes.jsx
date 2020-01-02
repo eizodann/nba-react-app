@@ -13,7 +13,6 @@ import PrivateRoutes from './components/authRoutes/privateRoutes';
 import PublicRoutes from './components/authRoutes/publicRoutes';
 
 const Routes =(props)=> {
-    console.log('this.props :', props);
     return (
       <Layout user={props.user}>
         <Switch>

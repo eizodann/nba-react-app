@@ -6,7 +6,7 @@ import { firebaseTeams, firebaseArticles, firebase } from '../../firebase';
 import { Editor } from 'react-draft-wysiwyg';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
 import { stateToHTML } from 'draft-js-export-html';
-
+import Uploader from '../widgets/fileuploader/fileuploader';
 
 class dashboard extends Component {
     state = {
@@ -46,6 +46,11 @@ class dashboard extends Component {
             },
             body:{
                 element:'texteditor',
+                value:'',
+                valid:true
+            },
+            image:{
+                element:'image',
                 value:'',
                 valid:true
             },
@@ -148,10 +153,33 @@ class dashboard extends Component {
             formIsValid = this.state.formdata[key].valid && formIsValid;
         }
 
-        console.log('dataToSubmit :', dataToSubmit);
-
         if (formIsValid) {
-            console.log('submit post ');
+            this.setState({
+                loading:true,
+                postError:''
+            })
+
+            firebaseArticles.orderByChild("id")
+            .limitToLast(1).once('value')
+            .then( snapshot => {
+                let articleId = null;
+                snapshot.forEach(childSnapshot=>{
+                    articleId = childSnapshot.val().id;
+                }); 
+                dataToSubmit['date'] = firebase.database.ServerValue.TIMESTAMP
+                dataToSubmit['id'] = articleId + 1;
+                //dataToSubmit['team'] = parseInt(dataToSubmit['team']);
+                dataToSubmit['team'] = parseInt(dataToSubmit['team'],10);
+
+               firebaseArticles.push(dataToSubmit)
+               .then( article => {
+                    this.props.history.push(`/articles/${article.key}`)
+               }).catch( e =>{
+                   this.setState({
+                       postError: e.message
+                   })
+               })
+            })
         } else {
             this.setState({
                 postError: 'something is wrong'
@@ -180,7 +208,6 @@ class dashboard extends Component {
         let rawState = convertToRaw(contentState)
 
         let html = stateToHTML(contentState)
-            console.log('html :', html);
         this.updateForm({id:'body'},html)
 
         this.setState({
@@ -188,11 +215,18 @@ class dashboard extends Component {
         })
     }
 
+    storeFilename = (filename) => {
+        this.updateForm({id:'image'},filename)
+    }
+
     render() {
         return (
             <div className={style.postContainer}>
                 <form onSubmit={this.submitForm}>
                     <h2>Add post</h2>
+
+                    <Uploader filename={ (filename)=> this.storeFilename(filename) }/>
+
                     <FormFields
                         id={'author'}
                         formdata={this.state.formdata.author}

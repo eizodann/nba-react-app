@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
+import React from "react";
+import { Switch } from "react-router-dom";
 import Home from "./components/home/home.jsx";
 import Layout from "./hoc/layout/layout.jsx";
 import NewsArticle from "./components/articles/news/post/index.jsx";
@@ -9,19 +9,20 @@ import VideosMain from "./components/articles/videos/main/index.jsx";
 import SignIn from "./components/signin/signin.jsx";
 import Dashboard from "./components/dashboard/dashboard.jsx";
 
+import PrivateRoutes from './components/authRoutes/privateRoutes';
+import PublicRoutes from './components/authRoutes/publicRoutes';
+
 const Routes =(props)=> {
-    console.log('this.props :', props);
     return (
       <Layout user={props.user}>
         <Switch>
-          <Route path="/" exact component={Home}></Route>
-          <Route path="/news" exact component={NewsMain}></Route>
-          <Route path="/articles/:id" exact component={NewsArticle}></Route>
-          <Route path="/videos/:id" exact component={VideoArticle}></Route>
-          <Route path="/videos" exact component={VideosMain}></Route>
-          <Route path="/sign-in" exact component={SignIn}></Route>
-          <Route path="/dashboard" exact component={Dashboard}></Route>
-
+          <PublicRoutes {...props} path="/" restricted={false} exact component={Home}></PublicRoutes>
+          <PublicRoutes {...props} path="/news" restricted={false} exact component={NewsMain}></PublicRoutes>
+          <PublicRoutes {...props} path="/articles/:id" restricted={false} exact component={NewsArticle}></PublicRoutes>
+          <PublicRoutes {...props} path="/videos/:id" restricted={false} exact component={VideoArticle}></PublicRoutes>
+          <PublicRoutes path="/videos" restricted={false} exact component={VideosMain}></PublicRoutes>
+          <PublicRoutes {...props} path="/sign-in" restricted={true} exact component={SignIn}></PublicRoutes>
+          <PrivateRoutes {...props} path="/dashboard" exact component={Dashboard}></PrivateRoutes>
         </Switch>
       </Layout>
     );

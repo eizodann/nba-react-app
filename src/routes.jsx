@@ -24,7 +24,6 @@ const Routes =(props)=> {
           <PublicRoutes path="/videos" restricted={false} exact component={VideosMain}></PublicRoutes>
           <PublicRoutes {...props} path="/sign-in" restricted={true} exact component={SignIn}></PublicRoutes>
           <PrivateRoutes {...props} path="/dashboard" exact component={Dashboard}></PrivateRoutes>
-
         </Switch>
       </Layout>
     );

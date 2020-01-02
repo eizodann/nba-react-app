@@ -111,7 +111,7 @@ class NewsList extends Component {
                       background: `url('/images/articles/${item.image}')`
                     }}
                   >
-                    <div></div>
+                    {/* <div></div> */}
                   </div>
                   <div className={style.right}>
                     <CardInfo
